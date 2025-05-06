@@ -1,4 +1,4 @@
-# Custom Code Review Rules
+// Additional custom rules
 
 - **Company Style Guide:** Follow our company style guide available at [internal
   link]. All new code must adhere to these standards.

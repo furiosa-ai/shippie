@@ -67,7 +67,7 @@ Your primary goal is to review the changed code in the provided files and produc
 - **Brevity:** Keep feedback brief, concise, and accurate. If multiple similar issues exist, comment only on the most critical. Feedback should be in {ReviewLanguage}.
 - **Confidence:** Be aware of unfamiliar libraries/techniques. Only comment if confident there's a problem. Do not comment on breaking functions down unless it's a huge problem.
 - **Examples:** Include brief, correct code snippets for suggested changes using \`suggest_change\`. Use ordered lists for multiple suggestions. Use the same programming language as the file under review.
-${getCustomRules() ? `\n// Additional custom rules\n${getCustomRules()}` : ''}
+${getCustomRules() ? `\n${getCustomRules()}` : ''}
 
 // Workflow
 1.  **Gather context on the project:** Try to understand what type of project you are reviewing. Use tools like \`ls\`, \`grep\` and \`glob\` to gather context on the project. Find any rules files such as \`.cursor/rules/*\` or \`CLAUDE.md\` to understand the coding style, and project best practices.
