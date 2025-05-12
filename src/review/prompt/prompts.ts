@@ -1,31 +1,31 @@
 // Node.js process module provides access to environment variables
-import process from 'process';
-import fs from 'fs';
-import path from 'path';
-import { logger } from '../../common/utils/logger';
+import process from "process";
+import fs from "fs";
+import path from "path";
+import { logger } from "../../common/utils/logger";
 
 // Function to load custom rules from a file if specified
 const loadCustomRulesFromFile = (): string => {
   const customRulesFile = process.env.CUSTOM_RULES_FILE;
   if (!customRulesFile) {
-    return '';
+    return "";
   }
 
   try {
     // Try to resolve path relative to current working directory
     const filePath = path.resolve(process.cwd(), customRulesFile);
-    
+
     if (fs.existsSync(filePath)) {
-      const fileContent = fs.readFileSync(filePath, 'utf8');
+      const fileContent = fs.readFileSync(filePath, "utf8");
       logger.info(`Loaded custom rules from file: ${filePath}`);
       return fileContent.trim();
     } else {
       logger.warn(`Custom rules file not found: ${filePath}`);
-      return '';
+      return "";
     }
   } catch (error) {
-    logger.error('Error loading custom rules file:', error);
-    return '';
+    logger.error("Error loading custom rules file:", error);
+    return "";
   }
 };
 
@@ -35,18 +35,24 @@ const getCustomRules = (): string => {
   if (fileRules) {
     return fileRules;
   }
-  
+
   if (process.env.CUSTOM_REVIEW_RULES) {
-    logger.info('Using custom rules from CUSTOM_REVIEW_RULES environment variable');
+    logger.info(
+      "Using custom rules from CUSTOM_REVIEW_RULES environment variable",
+    );
     return process.env.CUSTOM_REVIEW_RULES;
   }
-  
-  logger.debug('No custom rules specified, using default rules only');
-  return '';
+
+  logger.debug("No custom rules specified, using default rules only");
+  return "";
 };
 
+// getCustomRules() 결과를 상수에 저장
+const customRulesContent = getCustomRules();
+
 // Base instruction prompt
-const baseInstructionPrompt = `You are an expert {ProgrammingLanguage} developer agent. Your task is to review a pull request. Keep going until the user's query is completely resolved before ending your turn. Only terminate when you are sure the review is complete.
+const baseInstructionPrompt =
+  `You are an expert {ProgrammingLanguage} developer agent. Your task is to review a pull request. Keep going until the user's query is completely resolved before ending your turn. Only terminate when you are sure the review is complete.
 Use tools to investigate the file content, codebase structure, or the impact of changes and to gather information. DO NOT guess or make up an answer.
 You MUST plan before each action or tool call, and reflect on the outcomes of previous steps.
 
@@ -67,7 +73,7 @@ Your primary goal is to review the changed code in the provided files and produc
 - **Brevity:** Keep feedback brief, concise, and accurate. If multiple similar issues exist, comment only on the most critical. Feedback should be in {ReviewLanguage}.
 - **Confidence:** Be aware of unfamiliar libraries/techniques. Only comment if confident there's a problem. Do not comment on breaking functions down unless it's a huge problem.
 - **Examples:** Include brief, correct code snippets for suggested changes using \`suggest_change\`. Use ordered lists for multiple suggestions. Use the same programming language as the file under review.
-${getCustomRules() ? `\n${getCustomRules()}` : ''}
+${customRulesContent ? `\n${customRulesContent}` : ""}
 
 // Workflow
 1.  **Gather context on the project:** Try to understand what type of project you are reviewing. Use tools like \`ls\`, \`grep\` and \`glob\` to gather context on the project. Find any rules files such as \`.cursor/rules/*\` or \`CLAUDE.md\` to understand the coding style, and project best practices.
